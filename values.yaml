@@ -1,0 +1,35 @@
+registry: "gcr.io/datadoghq"
+
+targetSystem: "linux"
+
+datadog:
+  clusterName: "vitor-m"
+  apiKeyExistingSecret: "datadog-secret"
+  site: "datadoghq.com"
+  tags:
+    - "env:prod"
+
+  # Process collection
+  processAgent:
+    enabled: true
+    processCollection: true
+
+  # Logs collection
+  logs:
+    enabled: true
+    containerCollectAll: false
+
+  # Orchestrator Explorer
+  orchestratorExplorer:
+    enabled: true
+
+  # APM Configuration
+  apm:
+    portEnabled: true
+
+  clusterAgent:
+    enabled: true
+    admissionController:
+      enabled: true
+      configMode: service
+      mutateUnlabelled: true

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-app-kuber
+  labels:
+    app: node-app-kuber
+    admission.datadoghq.com/enabled: "true"  # Added label to enable Datadog Admission Controller mutation
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-app-kuber
+  template:
+    metadata:
+      labels:
+        app: node-app-kuber
+        admission.datadoghq.com/enabled: "true"  # Added label to pod template for mutation
+      annotations:
+        admission.datadoghq.com/enabled: "true"  # Datadog auto-instrumentation enabled
+        ad.datadoghq.com/node-app-kuber.logs: '[{"source":"nodejs","service":"node-app-kuber"}]'  # Log source and service name
+        admission.datadoghq.com/js-lib.version: "latest"  # JS library version for Datadog
+    spec:
+      serviceAccountName: default  # Default service account for the pod
+      containers:
+        - name: node-app-kuber  # Container name
+          image: vimouzin12/new-node-app-kuber:latest  # Image being used
+          imagePullPolicy: Always  # Image pull policy
+          env:
+            - name: DD_LOGS_INJECTION
+              value: "true"  # Enable Datadog logs injection
+            - name: DD_SERVICE
+              value: "node-app-kuber"  # Service name in Datadog
+            - name: DD_ENV
+              value: "prod"  # Environment setting in Datadog
+            - name: DD_VERSION
+              value: "1.0.0"  # Version setting for the service
